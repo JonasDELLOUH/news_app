@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import '../helper/data.dart';
 import '../helper/news.dart';
@@ -16,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late bool _loading = false;
+  late bool _loading = true;
 
   List<CategorieModel> categories = <CategorieModel>[];
 
@@ -27,13 +28,12 @@ class _HomePageState extends State<HomePage> {
     await news.getNews();
     newslist = news.news;
     setState(() {
-      //_loading = false;
+      newslist.isEmpty ? _loading = true : _loading = false;
     });
   }
 
   @override
   void initState() {
-    _loading = true;
     // TODO: implement initState
     super.initState();
 
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: MyAppBar(),
       body: SafeArea(
-        child: _loading == false
+        child: _loading == true
             ? const Center(
                 child: CircularProgressIndicator(),
               )
@@ -58,15 +58,30 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         height: 70,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: categories.length,
-                            itemBuilder: (context, index) {
-                              return CategoryCard(
+                        // child: ListView.builder(
+                        //     scrollDirection: Axis.horizontal,
+                        //     itemCount: categories.length,
+                        //     itemBuilder: (context, index) {
+                        //       return CategoryCard(
+                        //         imageAssetUrl: categories[index].imageAssetUrl,
+                        //         categoryName: categories[index].categorieName,
+                        //       );
+                        //     }),
+                        child: VxSwiper.builder(
+                          height: 50.0,
+                          viewportFraction: 0.35,
+                          autoPlay: true,
+                          autoPlayAnimationDuration: 3.seconds,
+                          autoPlayCurve: Curves.linear,
+                          enableInfiniteScroll: true,
+                          itemCount: categories.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return CategoryCard(
                                 imageAssetUrl: categories[index].imageAssetUrl,
-                                categoryName: categories[index].categorieName,
-                              );
-                            }),
+                                categoryName: categories[index].categorieName
+                            );
+                          },
+                        ),
                       ),
 
                       /// News Article
@@ -91,6 +106,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            getNews();
+          });
+          },
+        child: const Icon(Icons.next_plan, color: Colors.white,),
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:convert';
@@ -56,8 +55,7 @@ class NewsForCategorie {
 
   Future<void> getNewsForCategory(String category) async {
 
-    /*String url = "http://newsapi.org/v2/everything?q=$category&apiKey=${apiKey}";*/
-    String url = "http://newsapi.org/v2/top-headlines?country=in&category=$category&apiKey=$apiKey";
+    String url = "https://newsapi.org/v2/top-headlines?country=fr&category=$category&apiKey=$apiKey";
 
 
     var response = await http.get(Uri.parse(url));

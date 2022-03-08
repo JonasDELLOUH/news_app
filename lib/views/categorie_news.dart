@@ -17,11 +17,10 @@ class CategoryNews extends StatefulWidget {
 
 class _CategoryNewsState extends State<CategoryNews> {
   var newslist;
-  bool _loading = false;
+  bool _loading = true;
 
   @override
   void initState() {
-    _loading = true;
     getNews();
     // TODO: implement initState
     super.initState();
@@ -32,7 +31,7 @@ class _CategoryNewsState extends State<CategoryNews> {
     await news.getNewsForCategory(widget.newsCategory);
     newslist = news.news;
     setState(() {
-      //_loading = false;
+      newslist.isEmpty ? _loading = true : _loading = false;
     });
   }
 
@@ -54,6 +53,10 @@ class _CategoryNewsState extends State<CategoryNews> {
             )
           ],
         ),
+        leading: IconButton(
+          onPressed: () { Navigator.pop(context); },
+          icon: const Icon(Icons.arrow_back_ios,color: Colors.blue,),
+        ),
         actions: <Widget>[
           Opacity(
             opacity: 0,
@@ -65,7 +68,7 @@ class _CategoryNewsState extends State<CategoryNews> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
-      body: _loading == false ? const Center(
+      body: _loading == true ? const Center(
         child: CircularProgressIndicator(),
       ) : SingleChildScrollView(
         child: Container(
@@ -86,6 +89,14 @@ class _CategoryNewsState extends State<CategoryNews> {
                 }),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            getNews();
+          });
+        },
+        child: const Icon(Icons.next_plan, color: Colors.white,),
       ),
     );
   }
